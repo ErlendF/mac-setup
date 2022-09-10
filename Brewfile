@@ -21,7 +21,6 @@ brew "tfenv"
 brew "gcc"
 brew "make"
 brew "watch"
-brew "k9s"
 
 # Casks
 cask "firefox"
