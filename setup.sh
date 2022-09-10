@@ -66,17 +66,14 @@ install_zsh(){
 	step "Changing shell to zsh"
 	"$MAC_SETUP_DIR/lib/shell.sh"
 
-	step "Installing oh-my-zsh"
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+	if [[ -d "$HOME/.oh-my-zsh" ]]; then
+		step "oh my zsh already installed"
+	else 
+		step "Installing oh-my-zsh"
+		sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+	fi
 
 	step "zsh setup complete!"
-
-	finish
-}
-
-config_macos(){
-	step "Tweaking macOS config settings (may take a while)"
-	"$MAC_SETUP_DIR/lib/macos.sh"
 
 	finish
 }
@@ -102,7 +99,7 @@ install_zsh_plugins(){
 		step "fast-syntax-highlighting already installed"
 	else 
 		step "installing fast-syntax-highlighting"
-		git clone https://github.com/zdharma/fast-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/fast-syntax-highlighting
+		git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
 	fi 
 
 	if [ -d "$HOME/.oh-my-zsh/custom/plugins/alias-tips" ]; then
@@ -146,12 +143,13 @@ dotfiles(){
 set_zsh_profile(){
     step "Set zsh profile"
 
-    cp $MAC_SETUP_DIR/mac-profile.json $HOME/Library/Application\ Support/iTerm2/DynamicProfiles
+    cp $MAC_SETUP_DIR/iterm2/Profiles.json $HOME/Library/Application\ Support/iTerm2/DynamicProfiles
 
     printf "Remove: \n- ⌥←\n- ⌥→\n- ⌘←\n- ⌘←\n- ⌘←Delete\n- ⌥←Delete\nIn:\n"
-    printf "- Iterm2 > Preferences > Keys > Key Bindings"
-    printf "- Iterm2 > Preferences > Keys > Profiles > Default > Keys"
+	printf " - Iterm2 > Preferences > Keys > Key Bindings"
+    printf " - Iterm2 > Preferences > Keys > Profiles > Default > Keys"
     pause
+	finish
 }
 
 verify_ssh_key
@@ -162,3 +160,4 @@ iterm2
 config_macos
 install_zsh_plugins
 dotfiles
+set_zsh_profile
