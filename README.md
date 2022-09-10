@@ -3,7 +3,7 @@
 Run:
 
 ```
-git clone git@github.com:ErlendF/mac-setup.git projects/mac-setup
+git clone git@github.com:ErlendF/mac-setup.git ~/projects/mac-setup
 projects/mac-setup/setup.sh
 ```
 
