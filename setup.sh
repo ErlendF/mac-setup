@@ -156,7 +156,6 @@ verify_ssh_key
 homebrew
 brew_bundle
 install_zsh
-iterm2
 config_macos
 install_zsh_plugins
 dotfiles
