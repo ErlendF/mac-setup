@@ -156,9 +156,9 @@ set_zsh_profile(){
 
 verify_ssh_key
 homebrew
+brew_bundle
 install_zsh
 iterm2
-brew_bundle
 config_macos
 install_zsh_plugins
 dotfiles
