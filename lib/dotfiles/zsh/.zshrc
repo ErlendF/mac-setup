@@ -27,7 +27,6 @@ plugins=(
   vscode
   zsh-autosuggestions
   zsh-interactive-cd
-  zsh-navigation-tools
 )
 
 ##
