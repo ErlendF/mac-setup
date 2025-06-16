@@ -104,6 +104,31 @@ defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 # defaults write NSGlobalDomain KeyRepeat -int 1
 # defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
+# Disabling spotlight shortcuts
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><integer>0</integer></dict>"
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 65 "<dict><key>enabled</key><integer>0</integer></dict>"
+
+# Change window cycling shortcuts from Cmd+` to Option+Esc (better for Norwegian keyboards)
+# Option+Esc to cycle to next window of current application
+# Parameters: 65535 = no character (use key position), 53 = Esc key code, 524288 = Option modifier
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 27 "<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array><integer>65535</integer><integer>53</integer><integer>524288</integer></array><key>type</key><string>standard</string></dict></dict>"
+
+# Option+Shift+Esc to cycle to previous window of current application
+# Parameters: 65535 = no character (use key position), 53 = Esc key code, 655360 = Option+Shift modifiers (524288 + 131072)
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 28 "<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array><integer>65535</integer><integer>53</integer><integer>655360</integer></array><key>type</key><string>standard</string></dict></dict>"
+
+# Configure left half window snap
+# keyCode 8 = "C" key, modifierFlags 1572864 = Ctrl + Opt
+defaults write com.knollsoft.Rectangle leftHalf -dict-add keyCode -int 8 modifierFlags -int 1572864
+
+# Configure right half window snap
+# keyCode 9 = "V" key, modifierFlags 1572864 = Ctrl + Opt
+defaults write com.knollsoft.Rectangle rightHalf -dict-add keyCode -int 9 modifierFlags -int 1572864
+
+# Configure maximize/full screen
+# keyCode 49 = Space bar, modifierFlags 1572864 = Ctrl + Opt
+defaults write com.knollsoft.Rectangle maximize -dict-add keyCode -int 49 modifierFlags -int 1572864
+
 ###############################################################################
 # Screen                                                                      #
 ###############################################################################
@@ -448,11 +473,11 @@ defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 #   '{"enabled" = 0;"name" = "MENU_WEBSEARCH";}' \
 #   '{"enabled" = 0;"name" = "MENU_SPOTLIGHT_SUGGESTIONS";}'
 # Load new settings before rebuilding the index
-killall mds > /dev/null 2>&1
+killall mds >/dev/null 2>&1
 # Make sure indexing is enabled for the main volume
-sudo mdutil -i on / > /dev/null
+sudo mdutil -i on / >/dev/null
 # Rebuild the index from scratch
-sudo mdutil -E / > /dev/null
+sudo mdutil -E / >/dev/null
 
 ###############################################################################
 # Terminal & iTerm 2                                                          #
@@ -612,6 +637,7 @@ for app in "Activity Monitor" \
   "Safari" \
   "SystemUIServer" \
   "iCal"; do
-  killall "${app}" &> /dev/null
+  killall "${app}" &
+  >/dev/null
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."

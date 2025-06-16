@@ -21,6 +21,7 @@ brew "tfenv"
 brew "gcc"
 brew "make"
 brew "watch"
+brew "delta"
 
 # Casks
 cask "firefox"
@@ -36,3 +37,4 @@ cask "docker"
 cask "logitech-options"
 cask "discord"
 cask "steam"
+cask "rectangle"
