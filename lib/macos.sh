@@ -104,31 +104,6 @@ defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 # defaults write NSGlobalDomain KeyRepeat -int 1
 # defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
-# Disabling spotlight shortcuts
-defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><integer>0</integer></dict>"
-defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 65 "<dict><key>enabled</key><integer>0</integer></dict>"
-
-# Change window cycling shortcuts from Cmd+` to Option+Esc (better for Norwegian keyboards)
-# Option+Esc to cycle to next window of current application
-# Parameters: 65535 = no character (use key position), 53 = Esc key code, 524288 = Option modifier
-defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 27 "<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array><integer>65535</integer><integer>53</integer><integer>524288</integer></array><key>type</key><string>standard</string></dict></dict>"
-
-# Option+Shift+Esc to cycle to previous window of current application
-# Parameters: 65535 = no character (use key position), 53 = Esc key code, 655360 = Option+Shift modifiers (524288 + 131072)
-defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 28 "<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array><integer>65535</integer><integer>53</integer><integer>655360</integer></array><key>type</key><string>standard</string></dict></dict>"
-
-# Configure left half window snap
-# keyCode 8 = "C" key, modifierFlags 1572864 = Ctrl + Opt
-defaults write com.knollsoft.Rectangle leftHalf -dict-add keyCode -int 8 modifierFlags -int 1572864
-
-# Configure right half window snap
-# keyCode 9 = "V" key, modifierFlags 1572864 = Ctrl + Opt
-defaults write com.knollsoft.Rectangle rightHalf -dict-add keyCode -int 9 modifierFlags -int 1572864
-
-# Configure maximize/full screen
-# keyCode 49 = Space bar, modifierFlags 1572864 = Ctrl + Opt
-defaults write com.knollsoft.Rectangle maximize -dict-add keyCode -int 49 modifierFlags -int 1572864
-
 ###############################################################################
 # Screen                                                                      #
 ###############################################################################
