@@ -22,6 +22,12 @@ brew "gcc"
 brew "make"
 brew "watch"
 brew "delta"
+brew "eza"
+brew "bat"
+brew "ripgrep"
+brew "make"
+brew "gh"
+brew "stern"
 
 # Casks
 cask "firefox"
