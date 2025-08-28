@@ -30,6 +30,7 @@ brew "gh"
 brew "stern"
 brew "atuin"
 brew "zoxide
+brew "dive"
 
 # Casks
 cask "firefox"
