@@ -8,7 +8,6 @@ export TERM="xterm-256color"
 # Plugins
 ##
 plugins=(
-  alias-tips
   colored-man-pages
   command-not-found
   copybuffer
@@ -114,15 +113,28 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias -- -="cd -"
 
-# Always enable colored `grep` output
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
+alias sudo='sudo '                                                                      # Enable aliases to be sudo’ed
+alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'           # Google Chrome
+alias c="tr -d '\n' | pbcopy"                                                           # Trim new lines and copy to clipboard
+alias reload="exec ${SHELL} -l"                                                         # Reload the shell (i.e. invoke as a login shell)
+alias path='echo -e ${PATH//:/\\n}'                                                     # Print each PATH entry on a separate line
+alias watch='watch '                                                                    # Make aliases work with 'watch'
+alias l='eza -lah --git --icons=auto --git-repos-no-status --group-directories-first'   # Set useful eza options
+alias cat='bat'                                                                         # Replace cat with bat
+alias grep='rg'                                                                         # Replace grep with ripgrep
+alias myip="curl ipv4.icanhazip.com"                                                    # Utility for checking IP address
 
-alias ls="command ls ${colorflag}"                                                # Always use color output for `ls`
-alias sudo='sudo '                                                                # Enable aliases to be sudo’ed
-alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'     # Google Chrome
-alias c="tr -d '\n' | pbcopy"                                                     # Trim new lines and copy to clipboard
-alias reload="exec ${SHELL} -l"                                                   # Reload the shell (i.e. invoke as a login shell)
-alias path='echo -e ${PATH//:/\\n}'                                               # Print each PATH entry on a separate line
-alias watch='watch '                                                              # make aliases work with 'watch'
+# Typos
+alias gti='git'
+alias cod='code'
+
+##
+# Other
+##
+
+export KUBE_EDITOR="nano" # Setting kube editor to nano
+
+# Tool initializations
+eval "$(atuin init zsh --disable-up-arrow)"
+eval "$(zoxide init zsh)"
+eval "$(mise activate zsh)"
