@@ -28,6 +28,8 @@ brew "ripgrep"
 brew "make"
 brew "gh"
 brew "stern"
+brew "atuin"
+brew "zoxide
 
 # Casks
 cask "firefox"
