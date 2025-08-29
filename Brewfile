@@ -29,7 +29,7 @@ brew "make"
 brew "gh"
 brew "stern"
 brew "atuin"
-brew "zoxide
+brew "zoxide"
 brew "dive"
 
 # Casks
@@ -43,7 +43,7 @@ cask "visual-studio-code"
 cask "macfuse"
 cask "iterm2"
 cask "docker"
-cask "logitech-options"
+cask "logi-options+"
 cask "discord"
 cask "steam"
 cask "rectangle"
