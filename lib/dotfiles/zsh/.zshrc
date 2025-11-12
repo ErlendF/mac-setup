@@ -144,6 +144,8 @@ alias grep='rg'                                                                 
 alias myip="curl ipv4.icanhazip.com"                                                    # Utility for checking IP address
 alias kw='kubectl config current-context'
 alias kx='kubectx'
+alias awsp='export AWS_PROFILE=$(sed -n '\''s/^\[profile \(.*\)\]/\1/p'\'' ~/.aws/config | fzf)'
+alias awswho='aws sts get-caller-identity --no-cli-pager'
 
 # Typos
 alias gti='git'
@@ -153,7 +155,7 @@ alias cod='code'
 # Other
 ##
 export DISABLE_MAGIC_FUNCTIONS=true
-[[ -f "$ZDOTDIR/.zshrc.personal" ]] && source "$ZDOTDIR/.zshrc.personal"
+
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export KUBE_EDITOR="nano" # Setting kube editor to nano
