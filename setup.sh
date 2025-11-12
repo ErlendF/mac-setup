@@ -133,7 +133,6 @@ dotfiles(){
 	mkdir -p $HOME/.zsh
 	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/.zshenv ~/.zshenv
 	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/zsh/.zshrc ~/.zsh/.zshrc
-	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/zsh/.zshenv ~/.zsh/.zshenv
 	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/zsh/starship.toml ~/.zsh/starship.toml
 
 	touch ~/.zsh/.zshlocal
