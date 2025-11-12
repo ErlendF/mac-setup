@@ -144,6 +144,7 @@ alias grep='rg'                                                                 
 alias myip="curl ipv4.icanhazip.com"                                                    # Utility for checking IP address
 alias kw='kubectl config current-context'
 alias kx='kubectx'
+alias kn='kubens'
 alias awsp='export AWS_PROFILE=$(sed -n '\''s/^\[profile \(.*\)\]/\1/p'\'' ~/.aws/config | fzf)'
 alias awswho='aws sts get-caller-identity --no-cli-pager'
 
