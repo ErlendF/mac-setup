@@ -7,6 +7,7 @@ add_newline = true
 continuation_prompt = "[▸ ](dimmed white)"
 
 format = """
+$cmd_duration\
 $directory\
 
 $fill \
@@ -15,15 +16,15 @@ $aws\
 $azure\
 $kubernetes\
 $git_branch\
+$git_state\
 $git_status\
+$git_metrics\
+$time \
 
 $line_break\
 
 $sudo\
 $character"""
-
-# [character]
-# format = "[❯](bright-yellow) "
 
 [directory]
 truncation_length = 999
@@ -38,8 +39,16 @@ symbol = '-'
 style = "dimmed black"
 
 [git_branch]
+symbol = ""
 format = "[$symbol $branch]($style) "
 only_attached = true
+
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+cherry_pick = '[🍒 PICKING](bold red)'
+
+[git_metrics]
+disabled = false
 
 [aws]
 format = "[$symbol$profile( \\($region\\))]($style) "
@@ -58,6 +67,7 @@ symbol = " "
 disabled = false
 
 [kubernetes]
+symbol = " "
 format = "[$symbol$context( \\($namespace\\))]($style) "
 disabled = false
 detect_files = []
@@ -69,3 +79,14 @@ format = "[$symbol]($style)"
 style = "bold bright-purple"
 symbol = "⚡"
 disabled = false
+
+[time]
+disabled = false
+format = "[$time]($style)"
+time_format = "%H:%M"
+style = "bold dimmed white"
+
+[cmd_duration]
+min_time = 30000
+format = "\ntook [$duration]($style)\n\n"
+style = "bold yellow"
