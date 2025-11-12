@@ -36,7 +36,7 @@
   },
   "Use Non-ASCII Font" : false,
   "Rows" : 25,
-  "Default Bookmark" : "No",
+  "Default Bookmark" : "Yes",
   "Non-ASCII Anti Aliased" : true,
   "Use Bright Bold" : true,
   "Ansi 10 Color" : {
@@ -356,7 +356,7 @@
     "Red Component" : 0.73333334922790527,
     "Blue Component" : 0
   },
-  "Normal Font" : "MesloLGS-NF-Regular 12",
+  "Normal Font" : "BitstromWeraNF 15",
   "Transparency" : 0,
   "Right Option Key Sends" : 0,
   "Ansi 6 Color" : {

@@ -4,26 +4,39 @@
 export ZSH="$HOME/.oh-my-zsh"
 export TERM="xterm-256color"
 
+ZSH_DISABLE_COMPFIX=true             # Skip security audit
+zstyle ':omz:update' mode auto       # Automatically update without asking
+zstyle ':omz:update' frequency 7     # Update once a week (7 days)
+
+##
+# Fast paste
+##
+# Increase the chunk size for bracketed paste to make pasting instant
+pasteinit() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic
+}
+
+pastefinish() {
+  zle -N self-insert $OLD_SELF_INSERT
+}
+zstyle :bracketed-paste-magic paste-init pasteinit
+zstyle :bracketed-paste-magic paste-finish pastefinish
+
+# Disable the bracketed paste mode delay
+BRACKETED_PASTE_MAGIC_DELAY=0.01
+
 ##
 # Plugins
 ##
 plugins=(
   colored-man-pages
-  command-not-found
-  copybuffer
-  copypath
   docker
-  docker-compose
   extract
   fast-syntax-highlighting
   fzf
   git
-  git-prompt
-  golang
-  helm
   kubectl
-  screen
-  vscode
   zsh-autosuggestions
   zsh-interactive-cd
 )
@@ -31,8 +44,19 @@ plugins=(
 ##
 # Completion
 ##
-autoload -U compinit
-compinit
+autoload -Uz compinit
+# Speed up compinit by only checking once a day
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+# kubectl completion for resource names
+if command -v kubectl &> /dev/null; then
+  source <(kubectl completion zsh)
+fi
+
 zmodload -i zsh/complist
 setopt hash_list_all            # hash everything before completion
 setopt always_to_end            # when completing from the middle of a word, move the cursor to the end of the word
@@ -43,6 +67,8 @@ setopt list_ambiguous           # complete as much of a completion until it gets
 # sections completion !
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*' # case insensitive completion
 zstyle ':completion:*' menu select=1 _complete _ignored _approximate # enable completion menu
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 ##
 # Pushd
@@ -93,14 +119,7 @@ source $ZSH/oh-my-zsh.sh
 ##
 # Extra Settings
 ##
-[[ -f $ZDOTDIR/.zshlocal ]] && source $ZDOTDIR/.zshlocal
-[[ -f $ZDOTDIR/.zshenv ]] && source $ZDOTDIR/.zshenv
-
-##
-# powerlevel10k theme
-##
-source $ZSH/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
-[[ -f $ZDOTDIR/.p10k.zsh ]] && source $ZDOTDIR/.p10k.zsh
+[[ -f $ZDOTDIR/.zshlocal ]] && source $ZDOTDIR/.zshlocal  # For machine specific settings
 
 ##
 # Aliases
@@ -123,6 +142,8 @@ alias l='eza -lah --git --icons=auto --git-repos-no-status --group-directories-f
 alias cat='bat'                                                                         # Replace cat with bat
 alias grep='rg'                                                                         # Replace grep with ripgrep
 alias myip="curl ipv4.icanhazip.com"                                                    # Utility for checking IP address
+alias kw='kubectl config current-context'
+alias kx='kubectx'
 
 # Typos
 alias gti='git'
@@ -131,10 +152,46 @@ alias cod='code'
 ##
 # Other
 ##
+export DISABLE_MAGIC_FUNCTIONS=true
+[[ -f "$ZDOTDIR/.zshrc.personal" ]] && source "$ZDOTDIR/.zshrc.personal"
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export KUBE_EDITOR="nano" # Setting kube editor to nano
+export PATH="/opt/homebrew/bin:$PATH" # Adding homebrew to path
 
-# Tool initializations
-eval "$(atuin init zsh --disable-up-arrow)"
-eval "$(zoxide init zsh)"
-eval "$(mise activate zsh)"
+# Tool initializations - lazy loaded for faster startup
+# These will initialize on first use rather than at startup
+export STARSHIP_CONFIG="$ZDOTDIR/starship.toml"
+
+# Initialize starship immediately (needed for prompt)
+eval "$(starship init zsh)"
+
+# Lazy-load atuin - only initialize when first needed
+atuin() {
+  unfunction atuin
+  eval "$(command atuin init zsh --disable-up-arrow)"
+  atuin "$@"
+}
+
+# Lazy-load zoxide - only initialize when first needed
+z() {
+  unfunction z
+  eval "$(command zoxide init zsh)"
+  z "$@"
+}
+
+zi() {
+  unfunction zi
+  eval "$(command zoxide init zsh)"
+  zi "$@"
+}
+
+# Lazy-load mise - only initialize when first needed
+mise() {
+  unfunction mise
+  eval "$(command mise activate zsh)"
+  mise "$@"
+}
+
+# Initialize direnv hook (lightweight, but can be lazy-loaded if needed)
+eval "$(direnv hook zsh)"

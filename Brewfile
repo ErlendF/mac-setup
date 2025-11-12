@@ -31,6 +31,7 @@ brew "stern"
 brew "atuin"
 brew "zoxide"
 brew "dive"
+brew "starship"
 
 # Casks
 cask "firefox"
@@ -48,3 +49,6 @@ cask "discord"
 cask "steam"
 cask "rectangle"
 cask "contexts"
+
+# Fonts
+cask "font-bitstream-vera-sans-mono-nerd-font"

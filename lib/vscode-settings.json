@@ -1,0 +1,62 @@
+{
+  "yaml.schemas": {
+    "kubernetes": "!**/templates/**/*.yaml"
+  },
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": [
+    "--path-mode=abs",
+    "--fast-only"
+  ],
+  "go.formatTool": "custom",
+  "go.alternateTools": {
+    "customFormatter": "golangci-lint"
+  },
+  "go.formatFlags": [
+    "fmt",
+    "--stdin"
+  ],
+  "go.coverOnSingleTest": true,
+  "go.coverOnSingleTestFile": true,
+  "go.inlayHints.constantValues": true,
+  "go.inlayHints.functionTypeParameters": true,
+  "go.showWelcome": false,
+  "go.useLanguageServer": true,
+  "go.lintOnSave": "workspace",
+  "go.toolsManagement.autoUpdate": true,
+  "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+  "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
+  "files.associations": {
+    "**/templates/**/*.yaml": "helm",
+    "**/templates/**/*.yml": "helm"
+  },
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.agent.thinkingTool": true,
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "github.copilot.chat.scopeSelection": true,
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "azureTerraform.survey": {
+    "surveyPromptDate": "never",
+    "surveyPromptIgnoredCount": 0
+  },
+  "editor.fontFamily": "'BitstromWeraNFM', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontSize": 14,
+  "editor.fontLigatures": true,
+  "terminal.integrated.fontFamily": "BitstromWeraNFM",
+  "terminal.integrated.fontSize": 13
+}

@@ -1,0 +1,71 @@
+# version: 1.0.0
+
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+continuation_prompt = "[▸ ](dimmed white)"
+
+format = """
+$directory\
+
+$fill \
+
+$aws\
+$azure\
+$kubernetes\
+$git_branch\
+$git_status\
+
+$line_break\
+
+$sudo\
+$character"""
+
+# [character]
+# format = "[❯](bright-yellow) "
+
+[directory]
+truncation_length = 999
+truncate_to_repo = false
+read_only = ""
+use_os_path_sep = true
+style = "bold blue"
+format = '[$path ]($style)'
+
+[fill]
+symbol = '-'
+style = "dimmed black"
+
+[git_branch]
+format = "[$symbol $branch]($style) "
+only_attached = true
+
+[aws]
+format = "[$symbol$profile( \\($region\\))]($style) "
+symbol = " "
+style = "bold #ff8800"
+disabled = false
+
+[azure]
+format = "[$symbol$subscription]($style) "
+symbol = "󰠅  "
+style = "bold blue"
+disabled = false
+
+[golang]
+symbol = " "
+disabled = false
+
+[kubernetes]
+format = "[$symbol$context( \\($namespace\\))]($style) "
+disabled = false
+detect_files = []
+detect_folders = []
+detect_extensions = []
+
+[sudo]
+format = "[$symbol]($style)"
+style = "bold bright-purple"
+symbol = "⚡"
+disabled = false

@@ -1,6 +1,3 @@
-[user]
-name = Erlend Fonnes
-
 [credential]
 helper = osxkeychain
 
