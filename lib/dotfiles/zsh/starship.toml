@@ -88,5 +88,5 @@ style = "bold dimmed white"
 
 [cmd_duration]
 min_time = 30000
-format = "\ntook [$duration]($style)\n\n"
+format = "\n󰅐 [$duration]($style)\n\n"
 style = "bold yellow"
