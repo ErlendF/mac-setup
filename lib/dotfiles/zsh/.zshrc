@@ -153,7 +153,7 @@ alias awsp='export AWS_PROFILE=$(aws configure list-profiles | gum filter --plac
 alias awswho='aws sts get-caller-identity --no-cli-pager'
 
 # Authenticate with Azure CLI without subscription prompts
-alias al='az login --allow-no-subscriptions --output none < /dev/null'
+alias al='az login --output none'
 # Pick an Azure subscription interactively and switch to it
 alias as='az account list --query "[].name" -o tsv | gum filter --placeholder "Select Azure subscription" | xargs -I{} az account set --subscription "{}"'
 # Show current Azure account details with colored output

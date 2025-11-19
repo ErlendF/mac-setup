@@ -151,6 +151,16 @@ dotfiles(){
 		git config --global user.email "${git_email}"
 	fi
 
+	if command -v brew >/dev/null 2>&1 && [[ -x "$(brew --prefix 2>/dev/null)/bin/az" ]]; then
+		"$(brew --prefix)/bin/az" config set core.login_experience_v2=off
+		"$(brew --prefix)/bin/az" config set core.collect_telemetry=no
+	elif command -v az >/dev/null 2>&1; then
+		az config set core.login_experience_v2=off
+		az config set core.collect_telemetry=no
+	else
+		step "Azure CLI not found; skipping login experience configuration"
+	fi
+
 	step "Remove backups with 'rm -ir $MAC_SETUP_DIR/backup.*.old'"
 
 	finish
