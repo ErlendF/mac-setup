@@ -142,11 +142,22 @@ alias l='eza -lah --git --icons=auto --git-repos-no-status --group-directories-f
 alias cat='bat'                                                                         # Replace cat with bat
 alias grep='rg'                                                                         # Replace grep with ripgrep
 alias myip="curl ipv4.icanhazip.com"                                                    # Utility for checking IP address
-alias kw='kubectl config current-context'
-alias kx='kubectx'
-alias kn='kubens'
-alias awsp='export AWS_PROFILE=$(sed -n '\''s/^\[profile \(.*\)\]/\1/p'\'' ~/.aws/config | fzf)'
+
+alias kw='kubectl config current-context'                                               # Show current kubectl context
+alias kx='kubectx'                                                                      # Switch kubectl context               
+alias kn='kubens'                                                                       # Switch kubectl namespace  
+
+# Prompt for an AWS profile and export the selection
+alias awsp='export AWS_PROFILE=$(aws configure list-profiles | gum filter --placeholder "Select AWS profile")'
+# Show the current AWS caller identity information
 alias awswho='aws sts get-caller-identity --no-cli-pager'
+
+# Authenticate with Azure CLI without subscription prompts
+alias al='az login --allow-no-subscriptions --output none < /dev/null'
+# Pick an Azure subscription interactively and switch to it
+alias as='az account list --query "[].name" -o tsv | gum filter --placeholder "Select Azure subscription" | xargs -I{} az account set --subscription "{}"'
+# Show current Azure account details with colored output
+alias aw='az account show --output json | jq -r "\"\u001b[94m\" + .name + \"\u001b[0m - \u001b[33m\" + .tenantDefaultDomain + \"\u001b[0m (\" + .user.name + \")\""'
 
 # Typos
 alias gti='git'

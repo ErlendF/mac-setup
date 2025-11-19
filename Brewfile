@@ -32,6 +32,7 @@ brew "atuin"
 brew "zoxide"
 brew "dive"
 brew "starship"
+brew "gum"
 
 # Casks
 cask "firefox"
