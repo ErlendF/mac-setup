@@ -207,5 +207,7 @@ mise() {
   mise "$@"
 }
 
-# Initialize direnv hook (lightweight, but can be lazy-loaded if needed)
-eval "$(direnv hook zsh)"
+# Initialize direnv hook when available (lightweight, but can be lazy-loaded if needed)
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
