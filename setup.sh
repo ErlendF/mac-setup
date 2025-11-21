@@ -121,11 +121,32 @@ install_zsh_plugins(){
 dotfiles(){
 	step "Backing up existing dot files to $MAC_SETUP_DIR/backup"
 
-	mkdir -p $MAC_SETUP_DIR/backup
-	cp -ivL ~/.gitconfig $MAC_SETUP_DIR/backup/.gitconfig.old
-	cp -ivL ~/.zsh/.zshrc $MAC_SETUP_DIR/backup/.zshrc.old
-	cp -ivL ~/.zsh/.zshenv $MAC_SETUP_DIR/backup/.zshenv.old
-	cp -ivL ~/.zsh/starship.toml $MAC_SETUP_DIR/backup/starship.toml.old
+	mkdir -p "$MAC_SETUP_DIR/backup"
+	backup_date="$(date +%Y%m%d)"
+
+	if [[ -f "$HOME/.gitconfig" ]]; then
+		cp -ivL "$HOME/.gitconfig" "$MAC_SETUP_DIR/backup/.gitconfig-$backup_date"
+	else
+		step "Skipping backup of ~/.gitconfig (not found)"
+	fi
+
+	if [[ -f "$HOME/.zsh/.zshrc" ]]; then
+		cp -ivL "$HOME/.zsh/.zshrc" "$MAC_SETUP_DIR/backup/.zshrc-$backup_date"
+	else
+		step "Skipping backup of ~/.zsh/.zshrc (not found)"
+	fi
+
+	if [[ -f "$HOME/.zsh/.zshenv" ]]; then
+		cp -ivL "$HOME/.zsh/.zshenv" "$MAC_SETUP_DIR/backup/.zshenv-$backup_date"
+	else
+		step "Skipping backup of ~/.zsh/.zshenv (not found)"
+	fi
+
+	if [[ -f "$HOME/.zsh/starship.toml" ]]; then
+		cp -ivL "$HOME/.zsh/starship.toml" "$MAC_SETUP_DIR/backup/starship-$backup_date.toml"
+	else
+		step "Skipping backup of ~/.zsh/starship.toml (not found)"
+	fi
 
 	step "Copying dot files"
 	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/.gitconfig ~/.gitconfig
