@@ -17,8 +17,8 @@ The setup script can automatically configure the following components:
 The `Brewfile` installs essential development tools and applications:
 
 - **Languages & Runtimes**: Go, Python, Node.js, GCC
-- **CLI Tools**: git, tmux, fzf, jq, ripgrep, bat, eza, delta, gh, kubectl, k9s, awscli, terraform (tfenv), stern, atuin, zoxide, dive, starship
-- **GUI Applications**: Visual Studio Code, iTerm2, Docker, Firefox, Chrome, Slack, Signal, Spotify, Bitwarden, Rectangle, Contexts
+- **CLI Tools**: git, tmux, fzf, jq, ripgrep, bat, eza, delta, gh, kubectx, k9s, awscli, stern, atuin, zoxide, dive, starship, gum, pre-commit
+- **GUI Applications**: Visual Studio Code, iTerm2, Docker, Firefox, Chrome, Slack, Signal, Spotify, Bitwarden, Rectangle, Contexts, Discord, Steam, Logi Options+
 - **Fonts**: Bitstream Vera Sans Mono Nerd Font
 
 ### Optional Components (Interactive Prompts)
@@ -43,6 +43,9 @@ The setup uses a clean `~/.zsh/` directory structure to organize shell configura
 ├── .zshlocal        # Machine-specific settings (git-ignored, safe for secrets)
 ├── .zsh_history     # Command history
 └── starship.toml    # Starship prompt configuration
+
+~/.config/atuin/
+└── config.toml      # Atuin shell history search configuration
 ```
 
 **Why `~/.zsh/`?**
@@ -65,9 +68,9 @@ The provided `.zshrc` includes:
 - **Plugins**: git, docker, kubectl, fzf, zsh-autosuggestions, fast-syntax-highlighting, colored-man-pages, and more
 - **Starship prompt** for a beautiful, fast prompt
 - **Smart completion**: Case-insensitive with menu selection
-- **Command history**: Shared across sessions, no duplicates
-- **Modern CLI aliases**: `l` (eza), `cat` (bat), `grep` (ripgrep)
-- **Lazy-loaded tools**: atuin, zoxide, mise for faster shell startup
+- **Command history**: Shared across sessions (50k entries), no duplicates, with atuin for interactive search (Ctrl+R)
+- **Modern CLI aliases**: `l` (eza) and other utilities
+- **Lazy-loaded tools**: zoxide for faster shell startup; mise and atuin initialize at startup
 
 ## Installation
 
@@ -78,6 +81,16 @@ cd mac-setup && \
 ```
 
 The script will guide you through the setup process with interactive prompts for optional components.
+
+### Running Individual Tasks
+
+You can run a single task by name instead of the full setup:
+
+```sh
+./setup.sh dotfiles        # Only install dotfiles
+./setup.sh brew_bundle     # Only install Homebrew packages
+./setup.sh help            # List all available tasks
+```
 
 ## Important Notes
 
@@ -115,6 +128,7 @@ The script automatically backs up existing configuration files to `backup/` befo
 - `.gitconfig`
 - `.zshrc` and related zsh files
 - `starship.toml`
+- `atuin/config.toml`
 - VS Code settings (if replacing)
 
 Remove backups with: `rm -ir backup/*.old`
@@ -146,17 +160,6 @@ cask "application-name"
 ### Extending Zsh Configuration
 
 For personal additions that you want version controlled, edit `lib/dotfiles/zsh/.zshrc` directly. For temporary or machine-specific changes, use `~/.zsh/.zshlocal`.
-
-### Skipping Components
-
-The script is modular. You can comment out function calls at the bottom of `setup.sh` to skip specific components:
-
-```bash
-# verify_ssh_key
-# homebrew
-# brew_bundle
-# ...
-```
 
 ## Troubleshooting
 

@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-BOLD="\033[1m"
-WHITE="\033[0;37m"
-YELLOW="\033[1;33m"
-GREEN="\033[1;32m"
-NC="\033[0m"
+BOLD=$'\033[1m'
+WHITE=$'\033[0;37m'
+YELLOW=$'\033[1;33m'
+GREEN=$'\033[1;32m'
+NC=$'\033[0m'
 
 function message {
   echo "${WHITE}${BOLD}$1${NC}"

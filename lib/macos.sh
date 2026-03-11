@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+set -Euo pipefail
 
-# Close any open System Preferences panes, to prevent them from overriding
+# Close any open System Settings/Preferences panes, to prevent them from overriding
 # settings we’re about to change
-osascript -e 'tell application "System Preferences" to quit'
+osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
+osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
 
 # Ask for the administrator password upfront
 sudo -v
@@ -262,9 +264,6 @@ defaults write com.apple.dock show-process-indicators -bool true
 # (i.e. use the old Exposé behavior instead)
 defaults write com.apple.dock expose-group-by-app -bool false
 
-# Don’t show Dashboard as a Space
-defaults write com.apple.dock dashboard-in-overlay -bool true
-
 # Don’t automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false
 
@@ -280,9 +279,13 @@ defaults write com.apple.dock show-recents -bool false
 # Reset Launchpad, but keep the desktop wallpaper intact
 find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete
 
-# Add iOS & Watch Simulator to Launchpad
-sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simulator.app"
-sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
+# Add iOS & Watch Simulator to Launchpad (if Xcode is installed)
+if [[ -e "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" ]]; then
+  sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simulator.app"
+fi
+if [[ -e "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" ]]; then
+  sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
+fi
 
 # Add a spacer to the left side of the Dock (where the applications are)
 #defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type="spacer-tile";}'
@@ -505,9 +508,6 @@ defaults write com.apple.ActivityMonitor SortDirection -int 0
 # Enable the debug menu in Address Book
 defaults write com.apple.addressbook ABShowDebugMenu -bool true
 
-# Enable Dashboard dev mode (allows keeping widgets on the desktop)
-defaults write com.apple.dashboard devmode -bool true
-
 # Use plain text mode for new TextEdit documents
 defaults write com.apple.TextEdit RichText -int 0
 # Open and save files as UTF-8 in TextEdit
@@ -612,7 +612,6 @@ for app in "Activity Monitor" \
   "Safari" \
   "SystemUIServer" \
   "iCal"; do
-  killall "${app}" &
-  >/dev/null
+  killall "${app}" &>/dev/null || true
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."

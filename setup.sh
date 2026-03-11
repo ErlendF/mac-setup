@@ -1,18 +1,21 @@
-#!/bin/sh
+#!/bin/bash
+set -Eeuo pipefail
 
-MAC_SETUP_DIR="${0%/*}"
+trap 'echo "ERROR: Script failed on line $LINENO" >&2' ERR
 
-source $MAC_SETUP_DIR/lib/print.sh
+MAC_SETUP_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+
+source "$MAC_SETUP_DIR/lib/print.sh"
 
 pause(){
 	echo 
-	read -p "Press [Enter] key to continue... " fackEnterKey
+	read -rp "Press [Enter] key to continue... "
 	echo
 }
 
 verify_ssh_key(){
 	echo
-	read -p "Do you want to set up SSH key? (y/n): " ssh_response
+	read -rp "Do you want to set up SSH key? (y/n): " ssh_response
 	echo
 	
 	if [[ ! "$ssh_response" =~ ^[Yy]$ ]]; then
@@ -26,7 +29,7 @@ verify_ssh_key(){
 	if [[ ! -f "$path" ]]; then
 		step "Generating SSH key"
 		ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ed25519"
-		cat ~/.ssh/id_ed25519.pub | pbcopy
+		pbcopy < ~/.ssh/id_ed25519.pub
         step "Copied public key, paste it to GitHub"
         open https://github.com/settings/keys
         pause
@@ -44,7 +47,7 @@ verify_ssh_key(){
 
 homebrew(){
 	step "Checking Homebrew"
-	if ! type brew > /dev/null; then
+	if ! command -v brew &>/dev/null; then
 		step "Installing..."
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	fi
@@ -64,7 +67,7 @@ brew_bundle(){
 
 config_macos(){
 	echo
-	read -p "Do you want to tweak macOS config settings? (y/n): " macos_response
+	read -rp "Do you want to tweak macOS config settings? (y/n): " macos_response
 	echo
 	
 	if [[ ! "$macos_response" =~ ^[Yy]$ ]]; then
@@ -90,7 +93,7 @@ install_zsh(){
 		step "oh my zsh already installed"
 	else 
 		step "Installing oh-my-zsh"
-		sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+		sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	fi
 
 	step "zsh setup complete!"
@@ -112,13 +115,15 @@ install_zsh_plugins(){
 		step "fast-syntax-highlighting already installed"
 	else 
 		step "installing fast-syntax-highlighting"
-		git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
+		git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
 	fi
 
 	finish
 }
 
 dotfiles(){
+	local ZDOTDIR="$HOME/.zsh"
+
 	step "Backing up existing dot files to $MAC_SETUP_DIR/backup"
 
 	mkdir -p "$MAC_SETUP_DIR/backup"
@@ -130,47 +135,68 @@ dotfiles(){
 		step "Skipping backup of ~/.gitconfig (not found)"
 	fi
 
-	if [[ -f "$HOME/.zsh/.zshrc" ]]; then
-		cp -ivL "$HOME/.zsh/.zshrc" "$MAC_SETUP_DIR/backup/.zshrc-$backup_date"
+	if [[ -f "$ZDOTDIR/.zshrc" ]]; then
+		cp -ivL "$ZDOTDIR/.zshrc" "$MAC_SETUP_DIR/backup/.zshrc-$backup_date"
 	else
-		step "Skipping backup of ~/.zsh/.zshrc (not found)"
+		step "Skipping backup of $ZDOTDIR/.zshrc (not found)"
 	fi
 
-	if [[ -f "$HOME/.zsh/.zshenv" ]]; then
-		cp -ivL "$HOME/.zsh/.zshenv" "$MAC_SETUP_DIR/backup/.zshenv-$backup_date"
+	if [[ -f "$HOME/.zshenv" ]]; then
+		cp -ivL "$HOME/.zshenv" "$MAC_SETUP_DIR/backup/.zshenv-$backup_date"
 	else
-		step "Skipping backup of ~/.zsh/.zshenv (not found)"
+		step "Skipping backup of ~/.zshenv (not found)"
 	fi
 
-	if [[ -f "$HOME/.zsh/starship.toml" ]]; then
-		cp -ivL "$HOME/.zsh/starship.toml" "$MAC_SETUP_DIR/backup/starship-$backup_date.toml"
+	if [[ -f "$ZDOTDIR/starship.toml" ]]; then
+		cp -ivL "$ZDOTDIR/starship.toml" "$MAC_SETUP_DIR/backup/starship-$backup_date.toml"
 	else
-		step "Skipping backup of ~/.zsh/starship.toml (not found)"
+		step "Skipping backup of $ZDOTDIR/starship.toml (not found)"
+	fi
+
+	if [[ -f "$HOME/.config/atuin/config.toml" ]]; then
+		cp -ivL "$HOME/.config/atuin/config.toml" "$MAC_SETUP_DIR/backup/atuin-config-$backup_date.toml"
+	else
+		step "Skipping backup of ~/.config/atuin/config.toml (not found)"
 	fi
 
 	step "Copying dot files"
-	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/.gitconfig ~/.gitconfig
+	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/.gitconfig" ~/.gitconfig
 
-	mkdir -p $HOME/.zsh
-	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/.zshenv ~/.zshenv
-	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/zsh/.zshrc ~/.zsh/.zshrc
-	cp -ivL $MAC_SETUP_DIR/lib/dotfiles/zsh/starship.toml ~/.zsh/starship.toml
+	mkdir -p "$ZDOTDIR"
+	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/.zshenv" ~/.zshenv
+	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/zsh/.zshrc" "$ZDOTDIR/.zshrc"
+	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/zsh/starship.toml" "$ZDOTDIR/starship.toml"
 
-	touch ~/.zsh/.zshlocal
+	mkdir -p "$HOME/.config/atuin"
+	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/atuin/config.toml" ~/.config/atuin/config.toml
 
+	touch "$ZDOTDIR/.zshlocal"
+
+	step "Remove backups with 'rm -ir $MAC_SETUP_DIR/backup'"
+
+	finish
+}
+
+config_git_identity(){
 	step "Setting up git name"
 	if [[ -z "$(git config user.name)" ]]; then
 		printf "Insert git name: "
-		read git_name
+		read -r git_name
 		git config --global user.name "${git_name}"
 	fi
 
 	step "Setting up git email"
 	if [[ -z "$(git config user.email)" ]]; then
 		printf "Insert git email: "
-		read git_email
+		read -r git_email
 		git config --global user.email "${git_email}"
 	fi
+
+	finish
+}
+
+config_azure_cli(){
+	step "Configuring Azure CLI settings"
 
 	if command -v brew >/dev/null 2>&1 && [[ -x "$(brew --prefix 2>/dev/null)/bin/az" ]]; then
 		"$(brew --prefix)/bin/az" config set core.login_experience_v2=off
@@ -179,18 +205,16 @@ dotfiles(){
 		az config set core.login_experience_v2=off
 		az config set core.collect_telemetry=no
 	else
-		step "Azure CLI not found; skipping login experience configuration"
+		step "Azure CLI not found; skipping"
 	fi
-
-	step "Remove backups with 'rm -ir $MAC_SETUP_DIR/backup.*.old'"
 
 	finish
 }
 
 set_zsh_profile(){
-    step "Set zsh profile"
+	step "Set zsh profile"
 
-    cp $MAC_SETUP_DIR/iterm2/Profiles.json $HOME/Library/Application\ Support/iTerm2/DynamicProfiles
+	cp "$MAC_SETUP_DIR/iterm2/Profiles.json" "$HOME/Library/Application Support/iTerm2/DynamicProfiles"
 
 	step "Removing conflicting key bindings from iTerm2 preferences"
 	plist_file="$HOME/Library/Preferences/com.googlecode.iterm2.plist"
@@ -230,7 +254,7 @@ config_vscode(){
 	if [[ -f "$vscode_settings_file" ]]; then
 		echo
 		echo "VS Code settings file already exists."
-		read -p "Do you want to replace it with the new configuration? (y/n): " replace_response
+		read -rp "Do you want to replace it with the new configuration? (y/n): " replace_response
 		echo
 		
 		if [[ "$replace_response" =~ ^[Yy]$ ]]; then
@@ -302,13 +326,58 @@ install_vscode_extensions(){
 	finish
 }
 
-verify_ssh_key
-homebrew
-brew_bundle
-install_zsh
-config_macos
-install_zsh_plugins
-dotfiles
-set_zsh_profile
-config_vscode
-install_vscode_extensions
+# Tasks to run, in order. Each entry is "name:description".
+# This array serves as the single source of truth for:
+# - the allowlist for selective runs (./setup.sh <task>)
+# - the execution order for full runs (./setup.sh)
+# - the help text (./setup.sh help)
+tasks=(
+	"verify_ssh_key:Generate and configure SSH key for GitHub"
+	"homebrew:Install the Homebrew package manager"
+	"brew_bundle:Install packages from Brewfile"
+	"install_zsh:Install zsh and oh-my-zsh"
+	"config_macos:Tweak macOS system preferences"
+	"install_zsh_plugins:Install zsh-autosuggestions and fast-syntax-highlighting"
+	"dotfiles:Back up and install dotfiles (.gitconfig, .zshrc, etc.)"
+	"config_git_identity:Set git user name and email"
+	"config_azure_cli:Disable Azure CLI telemetry and configure login"
+	"set_zsh_profile:Configure iTerm2 profile and key bindings"
+	"config_vscode:Install VS Code settings"
+	"install_vscode_extensions:Install VS Code extensions"
+)
+
+# Extract just the task name from a "name:description" entry.
+task_name() { echo "${1%%:*}"; }
+
+# Print available tasks with descriptions.
+list_tasks() {
+	echo "Usage: ./setup.sh [task]"
+	echo
+	echo "Available tasks:"
+	for entry in "${tasks[@]}"; do
+		printf "  %-28s %s\n" "${entry%%:*}" "${entry#*:}"
+	done
+}
+
+# If "help" or "--help" is passed, show available tasks.
+# If a task name is provided, validate and run only that task.
+# Otherwise, run all tasks in order.
+if [[ "${1:-}" == "help" || "${1:-}" == "--help" ]]; then
+	list_tasks
+	exit 0
+elif [[ -n "${1:-}" ]]; then
+	for entry in "${tasks[@]}"; do
+		if [[ "$(task_name "$entry")" == "$1" ]]; then
+			"$1"
+			exit 0
+		fi
+	done
+	echo "Unknown task: $1"
+	echo
+	list_tasks
+	exit 1
+else
+	for entry in "${tasks[@]}"; do
+		"$(task_name "$entry")"
+	done
+fi

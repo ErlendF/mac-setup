@@ -1,0 +1,8 @@
+## Atuin configuration
+## See: https://docs.atuin.sh/configuration/config/
+
+## Do not record commands prefixed with a space
+history_filter = ["^ "]
+
+## Paste selected command into prompt for editing instead of executing immediately
+enter_accept = false

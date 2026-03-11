@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+set -Eeuo pipefail
 
 SHELL_PATH=$(command -v zsh)
 
-if ! grep "$SHELL_PATH" /etc/shells > /dev/null 2>&1 ; then
-  sudo sh -c "echo $SHELL_PATH >> /etc/shells"
+if ! grep -qF "$SHELL_PATH" /etc/shells; then
+  echo "$SHELL_PATH" | sudo tee -a /etc/shells >/dev/null
 fi
 
 sudo chsh -s "$SHELL_PATH" "$USER"
