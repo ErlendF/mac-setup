@@ -1,0 +1,13 @@
+# Global mise tool versions (machine-wide defaults).
+#
+# These are just the base defaults. To use a specific or older version for a
+# project, add a repo-local `.mise.toml` (or `.tool-versions`) and mise will
+# switch automatically when you cd into that directory.
+#
+# Apply changes here with `mise install` (or re-run `./setup.sh install_mise_tools`).
+[tools]
+node = "lts"
+python = "latest"
+kubectl = "latest"
+helm = "latest"
+terraform = "latest"

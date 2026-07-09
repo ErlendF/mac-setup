@@ -23,6 +23,12 @@ plugins=(
   zsh-interactive-cd
 )
 
+# Dev tool version manager - activate before oh-my-zsh so plugins that depend on
+# a mise-managed tool (e.g. the kubectl plugin) find it in PATH at plugin load time
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
 source "$ZSH/oh-my-zsh.sh"
 
 ##
@@ -156,11 +162,6 @@ _init_zoxide() {
 }
 z()  { _init_zoxide; z "$@"; }
 zi() { _init_zoxide; zi "$@"; }
-
-# Dev tool version manager - must run at startup to put shims in PATH
-if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh)"
-fi
 
 # Auto-load .envrc files on cd
 if command -v direnv >/dev/null 2>&1; then

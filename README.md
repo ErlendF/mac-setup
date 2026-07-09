@@ -27,7 +27,7 @@ During setup, you'll be asked whether to configure:
 
 - **SSH Key** *(optional)*: Generate and copy ED25519 SSH key to clipboard for GitHub
 - **macOS Settings** *(optional)*: Apply opinionated system preferences (Finder, Dock, trackpad, etc.)
-- **VS Code Settings** *(optional)*: Install VS Code configuration and extensions
+- **VS Code Settings** *(optional)*: Install VS Code configuration (extensions are installed via the `Brewfile`)
 - **iTerm2 Profile** *(configurable)*: Install custom iTerm2 profile with key bindings
 
 ## How It Works
@@ -70,7 +70,7 @@ The provided `.zshrc` includes:
 - **Smart completion**: Case-insensitive with menu selection
 - **Command history**: Shared across sessions (50k entries), no duplicates, with atuin for interactive search (Ctrl+R)
 - **Modern CLI aliases**: `l` (eza) and other utilities
-- **Lazy-loaded tools**: zoxide for faster shell startup; mise and atuin initialize at startup
+- **Lazy-loaded tools**: zoxide for faster shell startup; mise and atuin initialize at startup (mise activates before Oh My Zsh so plugins like `kubectl` see mise-managed tools)
 
 ## Installation
 
@@ -119,7 +119,8 @@ export PATH="/opt/custom/bin:$PATH"
 - **Modify `Brewfile`**: Add/remove applications before running the setup
 - **Edit `lib/dotfiles/`**: Customize dotfiles to your preferences before installation
 - **Adjust `lib/macos.sh`**: Modify system preferences to your liking (only runs if you opt-in)
-- **VS Code extensions**: Edit the extensions list in `setup.sh` before installation
+- **VS Code extensions**: Edit the `vscode` entries in `Brewfile` before installation
+- **mise-managed tools**: Edit `lib/dotfiles/mise/config.toml` to change which version-managed tools (kubectl, helm, terraform, node, python) get installed. These are installed via `mise` rather than brew so you can pin specific/older versions per-project with a repo-local `.mise.toml`. Go is intentionally kept in `Brewfile` (always latest).
 
 ### Backups
 
@@ -129,6 +130,7 @@ The script automatically backs up existing configuration files to `backup/` befo
 - `.zshrc` and related zsh files
 - `starship.toml`
 - `atuin/config.toml`
+- `mise/config.toml`
 - VS Code settings (if replacing)
 
 Remove backups with: `rm -ir backup/*.old`

@@ -159,6 +159,12 @@ dotfiles(){
 		step "Skipping backup of ~/.config/atuin/config.toml (not found)"
 	fi
 
+	if [[ -f "$HOME/.config/mise/config.toml" ]]; then
+		cp -ivL "$HOME/.config/mise/config.toml" "$MAC_SETUP_DIR/backup/mise-config-$backup_date.toml"
+	else
+		step "Skipping backup of ~/.config/mise/config.toml (not found)"
+	fi
+
 	step "Copying dot files"
 	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/.gitconfig" ~/.gitconfig
 
@@ -170,9 +176,37 @@ dotfiles(){
 	mkdir -p "$HOME/.config/atuin"
 	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/atuin/config.toml" ~/.config/atuin/config.toml
 
+	mkdir -p "$HOME/.config/mise"
+	cp -vL "$MAC_SETUP_DIR/lib/dotfiles/mise/config.toml" ~/.config/mise/config.toml
+
 	touch "$ZDOTDIR/.zshlocal"
 
 	step "Remove backups with 'rm -ir $MAC_SETUP_DIR/backup'"
+
+	finish
+}
+
+install_mise_tools(){
+	step "Installing tools managed by mise"
+
+	# mise is installed by brew_bundle; fall back to its brew path if the current
+	# shell's PATH hasn't picked up the Homebrew bin dir yet.
+	local mise_bin
+	if command -v mise >/dev/null 2>&1; then
+		mise_bin="mise"
+	elif command -v brew >/dev/null 2>&1 && [[ -x "$(brew --prefix 2>/dev/null)/bin/mise" ]]; then
+		mise_bin="$(brew --prefix)/bin/mise"
+	else
+		step "mise not found; run brew_bundle first. Skipping."
+		finish
+		return 0
+	fi
+
+	step "Installing tools from global mise config (~/.config/mise/config.toml)"
+	"$mise_bin" install
+
+	step "Installed versions:"
+	"$mise_bin" ls --current
 
 	finish
 }
@@ -279,53 +313,6 @@ config_vscode(){
 	finish
 }
 
-install_vscode_extensions(){
-	step "Installing VS Code extensions"
-	
-	# Check if code command is available
-	if ! command -v code &> /dev/null; then
-		step "VS Code command line tools not found!"
-		step "Please install by opening VS Code and running: Shell Command: Install 'code' command in PATH"
-		finish
-		return 1
-	fi
-	
-	# List of extensions to install
-	extensions=(
-		"davidanson.vscode-markdownlint"
-		"eamodio.gitlens"
-		"github.copilot"
-		"github.copilot-chat"
-		"github.vscode-github-actions"
-		"github.vscode-pull-request-github"
-		"golang.go"
-		"hashicorp.terraform"
-		"johnpapa.vscode-peacock"
-		"kcl.kcl-vscode-extension"
-		"ms-azuretools.vscode-azureterraform"
-		"ms-azuretools.vscode-containers"
-		"ms-kubernetes-tools.vscode-kubernetes-tools"
-		"ms-python.debugpy"
-		"ms-python.python"
-		"ms-python.vscode-pylance"
-		"ms-python.vscode-python-envs"
-		"ms-vscode-remote.remote-containers"
-		"ms-vscode.makefile-tools"
-		"redhat.vscode-yaml"
-		"tamasfe.even-better-toml"
-		"usernamehw.errorlens"
-	)
-	
-	for extension in "${extensions[@]}"; do
-		step "Installing $extension"
-		code --install-extension "$extension" --force
-	done
-	
-	step "All VS Code extensions installed!"
-	
-	finish
-}
-
 # Tasks to run, in order. Each entry is "name:description".
 # This array serves as the single source of truth for:
 # - the allowlist for selective runs (./setup.sh <task>)
@@ -339,11 +326,11 @@ tasks=(
 	"config_macos:Tweak macOS system preferences"
 	"install_zsh_plugins:Install zsh-autosuggestions and fast-syntax-highlighting"
 	"dotfiles:Back up and install dotfiles (.gitconfig, .zshrc, etc.)"
+	"install_mise_tools:Install tools managed by mise (kubectl, helm, node, etc.)"
 	"config_git_identity:Set git user name and email"
 	"config_azure_cli:Disable Azure CLI telemetry and configure login"
 	"set_zsh_profile:Configure iTerm2 profile and key bindings"
 	"config_vscode:Install VS Code settings"
-	"install_vscode_extensions:Install VS Code extensions"
 )
 
 # Extract just the task name from a "name:description" entry.
